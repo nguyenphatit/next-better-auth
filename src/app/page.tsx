@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { ClientLogout } from "@/components/client-logout";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 export default async function Home() {
   const session = await auth.api.getSession({
@@ -33,6 +35,9 @@ export default async function Home() {
           </p>
         </div>
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+            <Link href="/profile" className={buttonVariants({ variant: "outline" })}>
+                View Profile
+            </Link>
             <ClientLogout />
         </div>
       </main>
