@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { ClientLogout } from "@/components/client-logout";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
