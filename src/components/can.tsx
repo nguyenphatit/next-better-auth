@@ -1,9 +1,9 @@
 import React from "react";
-import { UserAuthInfo, canEditUser, isAdmin } from "@/lib/rbac";
+import { UserAuthInfo, canEditUser, hasPermission, Permission } from "@/lib/rbac";
 
 interface CanProps {
     user: UserAuthInfo | null | undefined;
-    perform: "edit" | "admin-only";
+    perform: Permission | "edit" | "admin-only";
     on?: { id: string };
     children: React.ReactNode;
 }
@@ -13,17 +13,12 @@ export function Can({ user, perform, on, children }: CanProps) {
 
     let allowed = false;
 
-    switch (perform) {
-        case "edit":
-            if (on) {
-                allowed = canEditUser(user, on);
-            }
-            break;
-        case "admin-only":
-            allowed = isAdmin(user);
-            break;
-        default:
-            allowed = false;
+    if (perform === "edit") {
+        if (on) {
+            allowed = canEditUser(user, on);
+        }
+    } else {
+        allowed = hasPermission(user, perform);
     }
 
     if (allowed) {

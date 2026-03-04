@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { UsersClient } from "@/components/users-client";
+import { getPermissionsForRole } from "@/lib/rbac";
 
 export default async function UsersPage() {
     const session = await auth.api.getSession({
@@ -11,6 +12,9 @@ export default async function UsersPage() {
     if (!session) {
         redirect("/login");
     }
+
+    const permissions = await getPermissionsForRole(session.user.role);
+    const currentUser = { ...session.user, permissions };
 
     let users: (typeof session.user)[] = [];
     try {
@@ -27,7 +31,7 @@ export default async function UsersPage() {
 
     return (
         <div className="container mx-auto py-10">
-            <UsersClient initialUsers={users} currentUser={session.user} />
+            <UsersClient initialUsers={users} currentUser={currentUser} />
         </div>
     );
 }
