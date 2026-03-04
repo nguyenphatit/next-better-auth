@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ClientLogout } from "@/components/client-logout";
+import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 
 export default async function Home() {
@@ -35,11 +36,8 @@ export default async function Home() {
           </p>
         </div>
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-            <Link
-              href="/users"
-              className={buttonVariants({ variant: "outline" })}
-            >
-              Manage Users
+            <Link href="/profile" className={buttonVariants({ variant: "outline" })}>
+                View Profile
             </Link>
             <ClientLogout />
         </div>
