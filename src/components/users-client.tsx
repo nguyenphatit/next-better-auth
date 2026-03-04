@@ -13,12 +13,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EditUserDialog } from "@/components/edit-user-dialog";
+import { Can } from "@/components/can";
 
 interface User {
     id: string;
     name: string;
     email: string;
-    role: string;
+    role?: string | null;
     image?: string | null;
 }
 
@@ -30,10 +31,6 @@ interface UsersClientProps {
 export function UsersClient({ initialUsers, currentUser }: UsersClientProps) {
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const router = useRouter();
-
-    const canEdit = (user: User) => {
-        return currentUser.role === "admin" || currentUser.id === user.id;
-    };
 
     return (
         <div className="space-y-4">
@@ -72,14 +69,14 @@ export function UsersClient({ initialUsers, currentUser }: UsersClientProps) {
                                     <span className="capitalize">{user.role}</span>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    {canEdit(user) && (
+                                    <Can user={currentUser} perform="edit" on={user}>
                                         <Button
                                             variant="ghost"
                                             onClick={() => setEditingUser(user)}
                                         >
                                             Edit
                                         </Button>
-                                    )}
+                                    </Can>
                                 </TableCell>
                             </TableRow>
                         ))}

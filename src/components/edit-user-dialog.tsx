@@ -19,12 +19,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Can } from "@/components/can";
 
 interface User {
     id: string;
     name: string;
     email: string;
-    role: string;
+    role?: string | null;
 }
 
 interface EditUserDialogProps {
@@ -43,10 +44,9 @@ export function EditUserDialog({
     onSuccess,
 }: EditUserDialogProps) {
     const [name, setName] = useState(user?.name || "");
-    const [role, setRole] = useState(user?.role || "user");
+    const [role, setRole] = useState<"admin" | "user">((user?.role as "admin" | "user") || "user");
     const [loading, setLoading] = useState(false);
 
-    const isAdmin = currentUser.role === "admin";
     const isSelf = currentUser.id === user?.id;
 
     const handleSave = async () => {
@@ -61,13 +61,15 @@ export function EditUserDialog({
                 if (error) throw error;
             }
 
-            if (isAdmin && !isSelf) {
+            const isCurrentUserAdmin = currentUser.role === "admin";
+
+            if (isCurrentUserAdmin && !isSelf) {
                 const { error } = await authClient.admin.setRole({
                     userId: user.id,
                     role: role,
                 });
                 if (error) throw error;
-            } else if (isAdmin && isSelf && role !== user.role) {
+            } else if (isCurrentUserAdmin && isSelf && role !== user.role) {
                  // Even admins might need to use admin.setRole to change their own role if updateUser doesn't support it
                  const { error } = await authClient.admin.setRole({
                     userId: user.id,
@@ -102,10 +104,10 @@ export function EditUserDialog({
                             disabled={!isSelf}
                         />
                     </div>
-                    {isAdmin && (
+                    <Can user={currentUser} perform="admin-only">
                         <div className="grid gap-2">
                             <Label htmlFor="role">Role</Label>
-                            <Select value={role} onValueChange={setRole}>
+                            <Select value={role} onValueChange={(v) => setRole(v as "admin" | "user")}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select a role" />
                                 </SelectTrigger>
@@ -115,7 +117,7 @@ export function EditUserDialog({
                                 </SelectContent>
                             </Select>
                         </div>
-                    )}
+                    </Can>
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={() => onOpenChange(false)}>
