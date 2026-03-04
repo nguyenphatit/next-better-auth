@@ -19,7 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { isAdmin } from "@/lib/rbac";
+import { Can } from "@/components/can";
 
 interface User {
     id: string;
@@ -47,7 +47,6 @@ export function EditUserDialog({
     const [role, setRole] = useState<"admin" | "user">((user?.role as "admin" | "user") || "user");
     const [loading, setLoading] = useState(false);
 
-    const isCurrentUserAdmin = isAdmin(currentUser);
     const isSelf = currentUser.id === user?.id;
 
     const handleSave = async () => {
@@ -61,6 +60,8 @@ export function EditUserDialog({
                 });
                 if (error) throw error;
             }
+
+            const isCurrentUserAdmin = currentUser.role === "admin";
 
             if (isCurrentUserAdmin && !isSelf) {
                 const { error } = await authClient.admin.setRole({
@@ -103,7 +104,7 @@ export function EditUserDialog({
                             disabled={!isSelf}
                         />
                     </div>
-                    {isCurrentUserAdmin && (
+                    <Can user={currentUser} perform="admin-only">
                         <div className="grid gap-2">
                             <Label htmlFor="role">Role</Label>
                             <Select value={role} onValueChange={(v) => setRole(v as "admin" | "user")}>
@@ -116,7 +117,7 @@ export function EditUserDialog({
                                 </SelectContent>
                             </Select>
                         </div>
-                    )}
+                    </Can>
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={() => onOpenChange(false)}>
