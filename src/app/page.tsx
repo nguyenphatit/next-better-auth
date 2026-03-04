@@ -2,7 +2,9 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { ClientLogout } from "@/components/client-logout";
+import { buttonVariants } from "@/components/ui/button";
 
 export default async function Home() {
   const session = await auth.api.getSession({
@@ -33,6 +35,12 @@ export default async function Home() {
           </p>
         </div>
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+            <Link
+              href="/users"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Manage Users
+            </Link>
             <ClientLogout />
         </div>
       </main>
