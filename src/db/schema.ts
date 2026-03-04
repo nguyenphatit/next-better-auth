@@ -14,6 +14,11 @@ export const user = sqliteTable("user", {
 	updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull()
 });
 
+export const rolePermission = sqliteTable("role_permission", {
+	role: text("role").primaryKey(),
+	permissions: text("permissions").notNull() // JSON array of strings
+});
+
 export const session = sqliteTable("session", {
 	id: text("id").primaryKey(),
 	expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
