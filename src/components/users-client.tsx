@@ -13,12 +13,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EditUserDialog } from "@/components/edit-user-dialog";
+import { canEditUser } from "@/lib/rbac";
 
 interface User {
     id: string;
     name: string;
     email: string;
-    role: string;
+    role?: string | null;
     image?: string | null;
 }
 
@@ -32,7 +33,7 @@ export function UsersClient({ initialUsers, currentUser }: UsersClientProps) {
     const router = useRouter();
 
     const canEdit = (user: User) => {
-        return currentUser.role === "admin" || currentUser.id === user.id;
+        return canEditUser(currentUser, user);
     };
 
     return (

@@ -12,10 +12,11 @@ export default async function UsersPage() {
         redirect("/login");
     }
 
-    let users: any[] = [];
+    let users: (typeof session.user)[] = [];
     try {
         const response = await auth.api.listUsers({
             headers: await headers(),
+            query: {}
         });
         users = response.users;
     } catch (error) {
